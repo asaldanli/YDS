@@ -40,28 +40,114 @@ background:linear-gradient(135deg,var(--ac),var(--purple));-webkit-background-cl
 
 /* MAIN */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
-.main-head{padding:16px 32px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--bg2)}
-.main-head h2{font-family:var(--font-head);font-size:18px;font-weight:700;letter-spacing:-.2px}
-.main-head .stats-mini{display:flex;gap:16px}
-.mini-st{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx2)}
+.main-head{padding:16px 32px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--bg2);gap:8px}
+.main-head h2{font-family:var(--font-head);font-size:18px;font-weight:700;letter-spacing:-.2px;white-space:nowrap}
+.main-head .stats-mini{display:flex;gap:16px;flex-shrink:0}
+.mini-st{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx2);white-space:nowrap}
 .mini-st b{font-weight:700;font-size:15px}
-.main-body{flex:1;overflow-y:auto;padding:24px 32px 40px;background:var(--bg)}
+.main-body{flex:1;overflow-y:auto;overflow-x:hidden;padding:24px 32px 40px;background:var(--bg)}
 
 /* BOTTOM NAV (mobile) */
-.bot-nav{display:none;gap:2px;padding:6px 8px 8px;background:var(--bg2);border-top:1px solid var(--brd);flex-shrink:0}
-.bnav{flex:1;padding:7px 2px 5px;border:none;border-radius:var(--rr);background:transparent;color:var(--tx3);font-family:var(--font);font-size:9px;font-weight:500;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.bot-nav{display:none;gap:2px;padding:6px 8px 8px;background:var(--bg2);border-top:1px solid var(--brd);flex-shrink:0;position:fixed;bottom:0;left:0;right:0;z-index:100}
+.bnav{flex:1;padding:7px 2px 5px;border:none;border-radius:var(--rr);background:transparent;color:var(--tx3);font-family:var(--font);font-size:9px;font-weight:500;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;-webkit-tap-highlight-color:transparent}
 .bnav svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
 .bnav.on{color:var(--ac);background:var(--acbg)}
 
 /* RESPONSIVE */
 @media(max-width:860px){
   .sidebar{display:none}
-  .bot-nav{display:flex}
-  .main-head{padding:12px 16px}
-  .main-body{padding:16px 16px 24px}
+  .bot-nav{display:flex;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--bg2);border-top:1px solid var(--brd)}
+  .bnav{font-size:9px;padding:6px 2px 4px}
+  .bnav svg{width:17px;height:17px}
+  .main-head{padding:10px 14px}
+  .main-head h2{font-size:15px}
+  .main-head .stats-mini{gap:8px}
+  .mini-st{font-size:10px}
+  .mini-st b{font-size:12px}
+  .main-body{padding:12px 10px calc(80px + env(safe-area-inset-bottom,0px))}
   .grid-2{grid-template-columns:1fr!important}
-  .grid-3{grid-template-columns:1fr!important}
+  .grid-3{grid-template-columns:1fr 1fr!important}
   .grid-4{grid-template-columns:1fr 1fr!important}
+  .card{padding:14px;border-radius:12px;margin-bottom:10px}
+  .card-t{font-size:11px;margin-bottom:8px;letter-spacing:.3px}
+  .stat-card{padding:10px 6px}
+  .stat-card b{font-size:18px}
+  .stat-card span{font-size:8px;letter-spacing:.5px}
+  .mod-card{padding:12px}
+  .mod-card .ico{font-size:20px;margin-bottom:4px}
+  .mod-card h3{font-size:13px}
+  .mod-card p{font-size:11px}
+  .quiz-card{padding:14px;border-radius:12px}
+  .quiz-stem{font-size:13px;line-height:1.7;margin-bottom:12px;word-break:break-word;overflow-wrap:anywhere}
+  .qo{padding:10px 12px;font-size:12px;line-height:1.5}
+  .explanation{padding:10px 12px;font-size:11px;line-height:1.5}
+  .chips{gap:4px;margin-bottom:10px}
+  .chip{padding:5px 9px;font-size:10px}
+  .btn{padding:8px 14px;font-size:11px;flex-wrap:wrap;justify-content:center}
+  .btn-sm{padding:6px 10px;font-size:10px}
+  .list-item{padding:8px 10px;gap:6px;font-size:11px;flex-wrap:wrap}
+  .list-item b{min-width:80px;font-size:11px}
+  .rule-card{padding:10px 12px;margin-bottom:6px}
+  .rule-card h4{font-size:12px}
+  .rule-card p{font-size:10px}
+  .pattern-box{font-size:10px;padding:3px 6px}
+  .donut-wrap{flex-direction:column;align-items:center;gap:10px}
+  .donut-legend{text-align:center;font-size:10px;line-height:1.8}
+  .wrong-word{flex-wrap:wrap;padding:8px 10px;gap:4px;font-size:11px}
+  .wrong-word b{min-width:auto;width:100%;font-size:11px;line-height:1.4}
+  .wrong-word span{font-size:10px}
+  .wrong-count{font-size:9px;padding:2px 6px}
+  .streak-box{padding:8px 0}
+  .streak-fire{font-size:28px}
+  .streak-num{font-size:32px}
+  .heatmap{gap:2px}
+  .hm-day{width:10px;height:10px;border-radius:2px}
+  .hm-legend .hm-day{width:9px;height:9px}
+  .hm-legend{font-size:9px;gap:3px;margin-top:4px}
+  .ms-item{padding:8px;gap:8px}
+  .ms-icon{width:26px;height:26px;font-size:13px}
+  .back-btn{font-size:12px;margin-bottom:8px}
+  .search{font-size:14px;padding:10px 12px}
+  .exam-tag{font-size:9px;padding:2px 7px}
+  .badge{font-size:9px;padding:2px 8px;margin-top:4px}
+  .pbar{height:4px}
+  .prep-group h4{font-size:12px}
+  .login-box{padding:28px 18px;margin:0 10px;max-width:100%}
+  .login-box h2{font-size:20px}
+  .login-input{font-size:16px;padding:12px}
+}
+@media(max-width:400px){
+  .main-body{padding:8px 6px calc(80px + env(safe-area-inset-bottom,0px))}
+  .main-head{padding:8px 10px}
+  .main-head h2{font-size:14px}
+  .mini-st{font-size:9px}
+  .card{padding:10px;border-radius:10px}
+  .quiz-card{padding:10px;border-radius:10px}
+  .stat-card{padding:8px 4px}
+  .stat-card b{font-size:16px}
+  .stat-card span{font-size:7px}
+  .grid-3{grid-template-columns:1fr!important}
+  .grid-4{gap:6px!important}
+  .chip{padding:4px 7px;font-size:9px}
+  .btn{padding:7px 10px;font-size:10px}
+  .qo{padding:8px 10px;font-size:11px}
+  .quiz-stem{font-size:12px;line-height:1.6}
+  .mod-card{padding:10px}
+  .mod-card h3{font-size:12px}
+  .bnav{font-size:8px;padding:5px 1px 3px}
+  .bnav svg{width:15px;height:15px}
+  .streak-num{font-size:26px}
+  .streak-fire{font-size:24px}
+  .donut-center b{font-size:16px}
+  .donut-legend{font-size:9px}
+  .list-item{font-size:10px;padding:6px 8px}
+  .list-item b{min-width:70px;font-size:10px}
+  .wrong-word{font-size:10px;padding:6px 8px}
+  .wrong-word b{font-size:10px}
+  .rule-card h4{font-size:11px}
+  .rule-card p{font-size:9px}
+  .explanation{font-size:10px;padding:8px 10px}
+  .back-btn{font-size:11px}
 }
 
 /* ====== COMPONENTS ====== */
@@ -97,7 +183,7 @@ background:linear-gradient(135deg,var(--ac),var(--purple));-webkit-background-cl
 .pbar-fill{height:100%;border-radius:3px;transition:width .5s ease}
 
 /* BUTTONS */
-.btn{padding:10px 22px;border:none;border-radius:var(--rr);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px}
+.btn{padding:10px 22px;border:none;border-radius:var(--rr);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px;word-break:break-word;text-align:center}
 .btn:active{transform:scale(.97)}
 .btn-ac{background:linear-gradient(135deg,var(--ac2),var(--ac));color:var(--bg);box-shadow:0 2px 12px rgba(34,211,238,.2)}
 .btn-ghost{background:var(--s2);color:var(--tx2);border:1px solid var(--brd)}
@@ -106,30 +192,30 @@ background:linear-gradient(135deg,var(--ac),var(--purple));-webkit-background-cl
 
 /* CHIPS */
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
-.chip{padding:6px 14px;border:1px solid var(--brd);border-radius:20px;background:transparent;color:var(--tx3);font-family:var(--font);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:.15s}
+.chip{padding:6px 14px;border:1px solid var(--brd);border-radius:20px;background:transparent;color:var(--tx3);font-family:var(--font);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:.15s;-webkit-tap-highlight-color:transparent}
 .chip.on{border-color:var(--ac);background:var(--acbg);color:var(--ac)}
 
 /* QUIZ */
 .quiz-card{background:var(--s1);border:1px solid var(--brd);border-radius:var(--r);padding:24px;margin-bottom:12px}
-.quiz-stem{font-size:15px;line-height:1.8;margin-bottom:18px;color:var(--tx)}
+.quiz-stem{font-size:15px;line-height:1.8;margin-bottom:18px;color:var(--tx);overflow-wrap:anywhere;word-break:break-word}
 .quiz-stem b{color:var(--ac)}
 .quiz-opts{display:flex;flex-direction:column;gap:8px}
-.qo{padding:13px 18px;border:1px solid var(--brd);border-radius:var(--rs);background:var(--s2);color:var(--tx);font-family:var(--font);font-size:14px;cursor:pointer;text-align:left;transition:.2s;line-height:1.5}
+.qo{padding:13px 18px;border:1px solid var(--brd);border-radius:var(--rs);background:var(--s2);color:var(--tx);font-family:var(--font);font-size:14px;cursor:pointer;text-align:left;transition:.2s;line-height:1.5;word-break:break-word;overflow-wrap:anywhere;-webkit-tap-highlight-color:transparent}
 .qo:hover:not(.done){border-color:var(--ac);background:rgba(34,211,238,.03)}
 .qo.ok{border-color:var(--green);background:rgba(52,211,153,.1);color:var(--green)}
 .qo.no{border-color:var(--red);background:rgba(251,113,133,.08);color:var(--red)}
 .explanation{background:var(--s2);border-left:3px solid var(--ac);border-radius:0 var(--rs) var(--rs) 0;padding:12px 18px;margin-top:14px;font-size:13px;color:var(--tx2);line-height:1.6}
 
 /* LISTS */
-.list-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--s1);border:1px solid var(--brd);border-radius:var(--rr);margin-bottom:4px;font-size:13px}
-.list-item b{color:var(--ac);min-width:120px;font-weight:600}
+.list-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--s1);border:1px solid var(--brd);border-radius:var(--rr);margin-bottom:4px;font-size:13px;word-break:break-word;overflow:hidden}
+.list-item b{color:var(--ac);min-width:100px;font-weight:600;flex-shrink:0}
 
 /* RULE CARD */
-.rule-card{background:var(--s1);border:1px solid var(--brd);border-radius:var(--r);padding:16px;margin-bottom:8px;cursor:pointer;transition:.15s}
+.rule-card{background:var(--s1);border:1px solid var(--brd);border-radius:var(--r);padding:16px;margin-bottom:8px;cursor:pointer;transition:.15s;overflow:hidden}
 .rule-card:hover{border-color:var(--acbrd)}
-.rule-card h4{font-family:var(--font-head);font-size:15px;font-weight:600;margin-bottom:4px}
-.rule-card p{font-size:12px;color:var(--tx2);line-height:1.5}
-.pattern-box{display:inline-block;background:var(--s2);border:1px solid var(--brd);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ac);font-weight:500;font-family:'Space Grotesk',monospace;margin:4px 0}
+.rule-card h4{font-family:var(--font-head);font-size:15px;font-weight:600;margin-bottom:4px;word-break:break-word}
+.rule-card p{font-size:12px;color:var(--tx2);line-height:1.5;word-break:break-word}
+.pattern-box{display:inline-block;background:var(--s2);border:1px solid var(--brd);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ac);font-weight:500;font-family:'Space Grotesk',monospace;margin:4px 0;word-break:break-all}
 .exam-tag{display:inline-block;background:rgba(167,139,250,.08);color:var(--purple);font-size:10px;padding:3px 10px;border-radius:8px;font-weight:600}
 
 /* HEATMAP */
@@ -142,7 +228,7 @@ background:linear-gradient(135deg,var(--ac),var(--purple));-webkit-background-cl
 .hm-legend .hm-day{width:12px;height:12px}
 
 /* DONUT */
-.donut-wrap{display:flex;align-items:center;gap:16px}
+.donut-wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .donut-center b{font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--ac)}
 .donut-center span{font-size:9px;color:var(--tx3)}
@@ -150,9 +236,9 @@ background:linear-gradient(135deg,var(--ac),var(--purple));-webkit-background-cl
 .donut-legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
 
 /* WRONG WORDS */
-.wrong-word{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(251,113,133,.04);border:1px solid rgba(251,113,133,.1);border-radius:var(--rr);margin-bottom:4px;font-size:13px}
-.wrong-word b{color:var(--red);min-width:120px}
-.wrong-word span{color:var(--tx2);flex:1}
+.wrong-word{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(251,113,133,.04);border:1px solid rgba(251,113,133,.1);border-radius:var(--rr);margin-bottom:4px;font-size:13px;flex-wrap:wrap;word-break:break-word}
+.wrong-word b{color:var(--red);min-width:0}
+.wrong-word span{color:var(--tx2);flex:1;min-width:0}
 .wrong-count{background:rgba(251,113,133,.12);color:var(--red);font-size:10px;padding:2px 8px;border-radius:8px;font-weight:600;white-space:nowrap}
 
 /* STREAK */
@@ -383,9 +469,9 @@ function render(){
           ${[['all','Tümü',cn.all],['grammar','Gramer',cn.grammar],['hedef','HEDEF',cn.hedef],['w2000','2000 Kelime',cn.w2000],['pv','Phrasal Verb',cn.pv],['prep','Preposition',cn.prep],['vocab','Kelime',cn.vocab],['translation','Çeviri',cn.translation]].map(([k,n,c])=>`<button class="chip ${qFilter===k?'on':''}" onclick="qFilter='${k}';qDir='both';startQ(getQPool(),'${k}');subView=null;render()">${n} (${c})</button>`).join('')}
         </div>
         ${qFilter==='w2000'?`<div class="chips" style="margin-top:4px">
-          <button class="chip ${qDir==='both'?'on':''}" onclick="qDir='both';startQ(getQPool(),'w2000');subView=null;render()">🔄 Her İki Yön (${cn.w2000})</button>
-          <button class="chip ${qDir==='en2tr'?'on':''}" onclick="qDir='en2tr';startQ(getQPool(),'w2000');subView=null;render()">🇬🇧→🇹🇷 EN→TR (${D.questions.filter(q=>q.subtype==='word_2000').length})</button>
-          <button class="chip ${qDir==='tr2en'?'on':''}" onclick="qDir='tr2en';startQ(getQPool(),'w2000');subView=null;render()">🇹🇷→🇬🇧 TR→EN (${D.questions.filter(q=>q.subtype==='word_2000_rev').length})</button>
+          <button class="chip ${qDir==='both'?'on':''}" onclick="qDir='both';startQ(getQPool(),'w2000');subView=null;render()">🔄 Karışık (${cn.w2000})</button>
+          <button class="chip ${qDir==='en2tr'?'on':''}" onclick="qDir='en2tr';startQ(getQPool(),'w2000');subView=null;render()">EN→TR (${D.questions.filter(q=>q.subtype==='word_2000').length})</button>
+          <button class="chip ${qDir==='tr2en'?'on':''}" onclick="qDir='tr2en';startQ(getQPool(),'w2000');subView=null;render()">TR→EN (${D.questions.filter(q=>q.subtype==='word_2000_rev').length})</button>
         </div>`:''}
         </div>
         <div style="text-align:center;padding:40px;color:var(--tx3)">Yukarıdan kategori seç ve çözmeye başla</div>`;
@@ -465,10 +551,10 @@ function render(){
       }
       if(qs){const q=qs.q;
         body=`<button class="back-btn" onclick="subView=null;qs=null;render()">← Kelime</button>
-          <div style="display:flex;gap:6px;margin-bottom:12px">
+          <div class="chips" style="margin-bottom:10px">
             <button class="chip ${qDir==='both'?'on':''}" onclick="qDir='both';qs=null;subView='quiz';render()">🔄 Karışık</button>
-            <button class="chip ${qDir==='en2tr'?'on':''}" onclick="qDir='en2tr';qs=null;subView='quiz';render()">🇬🇧→🇹🇷 EN→TR</button>
-            <button class="chip ${qDir==='tr2en'?'on':''}" onclick="qDir='tr2en';qs=null;subView='quiz';render()">🇹🇷→🇬🇧 TR→EN</button>
+            <button class="chip ${qDir==='en2tr'?'on':''}" onclick="qDir='en2tr';qs=null;subView='quiz';render()">EN→TR</button>
+            <button class="chip ${qDir==='tr2en'?'on':''}" onclick="qDir='tr2en';qs=null;subView='quiz';render()">TR→EN</button>
           </div>
           <div class="quiz-card"><div style="margin-bottom:8px"><span class="badge badge-yel">${qDir==='en2tr'?'EN→TR':qDir==='tr2en'?'TR→EN':'Karışık'}</span></div>
             <div class="quiz-stem">${q.stem}</div>
@@ -485,10 +571,10 @@ function render(){
         <div class="card">
           <div class="card-t">🎯 2000 Kelime Quiz</div>
           <p style="font-size:13px;color:var(--tx2);margin-bottom:14px">Yön seçerek kelime quizine başla</p>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
-            <button class="btn btn-ac" onclick="qDir='both';subView='quiz';qs=null;render()">🔄 Karışık (${w2kEN+w2kTR})</button>
-            <button class="btn btn-ghost" onclick="qDir='en2tr';subView='quiz';qs=null;render()">🇬🇧→🇹🇷 İngilizce → Türkçe (${w2kEN})</button>
-            <button class="btn btn-ghost" onclick="qDir='tr2en';subView='quiz';qs=null;render()">🇹🇷→🇬🇧 Türkçe → İngilizce (${w2kTR})</button>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn btn-ac" style="width:100%;justify-content:center" onclick="qDir='both';subView='quiz';qs=null;render()">🔄 Karışık (${w2kEN+w2kTR})</button>
+            <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="qDir='en2tr';subView='quiz';qs=null;render()">🇬🇧→🇹🇷 İngilizce → Türkçe (${w2kEN})</button>
+            <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="qDir='tr2en';subView='quiz';qs=null;render()">🇹🇷→🇬🇧 Türkçe → İngilizce (${w2kTR})</button>
           </div>
         </div>
         <div class="card-t" style="margin-top:8px">📚 Tematik Kelime Grupları</div>
@@ -546,7 +632,7 @@ function render(){
       body=`<button class="back-btn" onclick="subView=null;subId=null;render()">← Yanlışlarım</button>
         <div class="card"><div class="card-t" style="color:${cats[subId]?.color||'var(--tx2)'}">📋 ${subId} — ${catItems.length} Yanlış Soru</div>
           <button class="btn btn-ac btn-sm" style="margin-bottom:14px" onclick="subView='quiz';qs=null;render()">🔁 Hepsini Tekrar Çöz</button>
-          ${catItems.map(([k,v])=>`<div class="wrong-word"><b style="font-size:12px;min-width:auto;flex:2">${v.stem||k}</b><span style="font-size:11px">Doğru: <b style="color:var(--green)">${v.correct}</b></span><span class="wrong-count">${v.count}x</span></div>`).join('')}
+          ${catItems.map(([k,v])=>`<div class="wrong-word"><b style="flex:1;min-width:0">${v.stem||k}</b><span style="font-size:10px">Doğru: <b style="color:var(--green)">${v.correct}</b></span><span class="wrong-count">${v.count}x</span></div>`).join('')}
         </div>`;
     }else{
       if(!sorted.length){
@@ -583,15 +669,12 @@ function render(){
           <div class="card-t">📂 Kategoriye Göre Yanlışlar</div>
           ${catEntries.map(([name,cat])=>`
             <div class="rule-card" style="border-left:3px solid ${cat.color}" onclick="subView='catlist';subId='${name}';render()">
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+                <div style="min-width:0;flex:1">
                   <h4 style="color:${cat.color}">${name}</h4>
-                  <p>${cat.items.length} farklı soru — toplam ${cat.count} yanlış</p>
+                  <p>${cat.items.length} soru — ${cat.count} yanlış</p>
                 </div>
-                <div style="display:flex;gap:6px;align-items:center">
-                  <button class="btn btn-ac btn-sm" onclick="event.stopPropagation();subView='quiz';subId='${name}';qs=null;render()">🔁 Tekrar Çöz</button>
-                  <span style="font-size:22px;color:var(--tx3)">›</span>
-                </div>
+                <button class="btn btn-ac btn-sm" onclick="event.stopPropagation();subView='quiz';subId='${name}';qs=null;render()">🔁 Tekrar</button>
               </div>
               <div class="pbar" style="margin-top:8px"><div class="pbar-fill" style="width:${Math.round(cat.count/totalW*100)}%;background:${cat.color}"></div></div>
             </div>
@@ -672,7 +755,7 @@ function render(){
         <div class="main-body">${body}</div>
       </div>
       <div class="bot-nav">
-        ${[['home','Ana',IC.home],['practice','Çöz',IC.quiz],['hedef','HEDEF',IC.star],['grammar','Gramer',IC.book],['wronglist','Yanlış',IC.x],['progress','İlerleme',IC.chart]].map(([id,l,ic])=>
+        ${[['home','Ana',IC.home],['practice','Çöz',IC.quiz],['vocab','Kelime',IC.grid],['hedef','HEDEF',IC.star],['grammar','Gramer',IC.book],['wronglist','Yanlış',IC.alert],['progress','İstatistik',IC.chart]].map(([id,l,ic])=>
           `<button class="bnav ${view===id?'on':''}" onclick="view='${id}';subView=${['practice','grammar','vocab','hedef'].includes(id)?"'list'":"null"};qs=null;render()">${ic}${l}</button>`
         ).join('')}
       </div>
