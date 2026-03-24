@@ -227,8 +227,8 @@ function recordAnswer(sec,ok,qData){
   if(!d.sec[sec])d.sec[sec]={q:0,c:0};d.sec[sec].q++;if(ok)d.sec[sec].c++;
   // Track wrong words
   if(!ok && qData){
-    const key = qData.stem.replace(/<[^>]+>/g,'').substring(0,60);
-    if(!wrongs[key])wrongs[key]={count:0,correct:qData.options[qData.answer],type:qData.subtype||''};
+    const key = qData.id||qData.stem.replace(/<[^>]+>/g,'').substring(0,60);
+    if(!wrongs[key])wrongs[key]={count:0,correct:qData.options[qData.answer],type:qData.subtype||'',stem:qData.stem.replace(/<[^>]+>/g,'').substring(0,80),qid:qData.id||null};
     wrongs[key].count++;
   }
   saveAll();
@@ -251,6 +251,23 @@ function getQPool(){
   if(qFilter==='vocab')return D.questions.filter(q=>['vocabulary','vocab_group','word_def'].includes(q.subtype));
   if(qFilter==='translation')return D.questions.filter(q=>q.type==='translation'||['en2tr_gen'].includes(q.subtype));
   return D.questions;
+}
+function getWrongCat(t){
+  if(['conjunction','tense','preposition','sentence_completion','conjunction_gen','tense_gen','sentence_comp_gen','preposition_sent'].includes(t))return 'Gramer';
+  if(['phrasal_verb','phrasal_verb_rev','phrasal_verb_sent'].includes(t))return 'Phrasal Verb';
+  if(['preposition_quiz','preposition_quiz_rev'].includes(t))return 'Preposition';
+  if(['hedef_fill','synonym','tr2en_word','hedef_colloc'].includes(t))return 'HEDEF Kelime';
+  if(['word_2000','word_2000_rev'].includes(t))return '2000 Kelime';
+  if(['vocab_group','word_def','vocabulary'].includes(t))return 'Kelime Grubu';
+  if(t==='translation'||t==='tr2en'||t==='en2tr'||t==='en2tr_gen')return 'Çeviri';
+  return 'Diğer';
+}
+function getWrongQPool(catFilter){
+  const ids=[];
+  Object.entries(wrongs).forEach(([k,v])=>{
+    if(v.qid && (!catFilter || getWrongCat(v.type)===catFilter))ids.push(v.qid);
+  });
+  return D.questions.filter(q=>ids.includes(q.id));
 }
 function startQ(pool,sec){if(!pool.length)return;const sh=[...pool].sort(()=>Math.random()-.5);qs={q:sh[0],sec,done:false};qa=null}
 function ansQ(i){if(!qs||qs.done)return;const ok=i===qs.q.answer;qa={sel:i,ok};qs.done=true;recordAnswer(qs.sec,ok,qs.q);render()}
@@ -495,12 +512,96 @@ function render(){
 
   // ===== WRONG WORDS =====
   else if(view==='wronglist'){
-    title='Yanlış Bilinenler';
+    title='Yanlışlarım';
     const sorted=Object.entries(wrongs).sort((a,b)=>b[1].count-a[1].count);
-    body=`<div class="card"><div class="card-t">${IC.x} En Çok Yanlış Yapılan Sorular</div>
-      <p style="font-size:13px;color:var(--tx2);margin-bottom:8px">${sorted.length} farklı soru yanlış cevaplanmış. Bu listeye odaklan!</p></div>
-      ${sorted.length?sorted.map(([key,val])=>`<div class="wrong-word"><b style="font-size:12px;min-width:auto;flex:2">${key}</b><span style="font-size:11px">Doğru: <b style="color:var(--green)">${val.correct}</b></span><span class="wrong-count">${val.count}x yanlış</span></div>`).join(''):'<div style="text-align:center;padding:40px;color:var(--tx3)">Henüz yanlış yok — harika!</div>'}
-      ${sorted.length?`<button class="btn btn-danger btn-sm" style="margin-top:12px" onclick="if(confirm('Yanlış listesi temizlensin mi?')){wrongs={};LS.set('wrongs',wrongs);render()}">Listeyi Temizle</button>`:''}`;
+    const totalWrong=sorted.reduce((s,e)=>s+e[1].count,0);
+    // Group by type using top-level getWrongCat
+    const cats={};
+    sorted.forEach(([k,v])=>{
+      const catName=getWrongCat(v.type||'other');
+      if(!cats[catName])cats[catName]={count:0,items:[],color:'var(--tx3)'};
+      cats[catName].count+=v.count;
+      cats[catName].items.push([k,v]);
+    });
+    const catColors={'Gramer':'var(--red)','Phrasal Verb':'var(--purple)','Preposition':'var(--blue)','HEDEF Kelime':'var(--ac)','2000 Kelime':'var(--yel)','Kelime Grubu':'var(--orange)','Çeviri':'var(--green)','Diğer':'var(--tx3)'};
+    Object.keys(cats).forEach(c=>{cats[c].color=catColors[c]||'var(--tx3)'});
+
+    if(subView==='quiz'){
+      if(!qs){
+        const pool=getWrongQPool(subId);
+        if(pool.length)startQ(pool,'wronglist');
+        else{subView=null;render();return}
+      }
+      if(qs){const q=qs.q;
+        body=`<button class="back-btn" onclick="subView=null;subId=null;qs=null;render()">← Yanlışlarım</button>
+          <div style="margin-bottom:10px"><span class="badge badge-red">🔁 Tekrar Modu${subId?' — '+subId:''}</span></div>
+          <div class="quiz-card">
+            <div class="quiz-stem">${q.stem}</div>
+            <div class="quiz-opts">${q.options.map((o,i)=>{let cls='qo';if(qs.done){cls+=' done';if(i===q.answer)cls+=' ok';else if(qa&&i===qa.sel&&!qa.ok)cls+=' no'}return`<button class="${cls}" onclick="ansQ(${i})">${String.fromCharCode(65+i)}) ${o}</button>`}).join('')}</div>
+            ${qs.done?`<div class="explanation">💡 ${q.explanation||''}</div>
+              <div style="text-align:center;margin-top:14px"><button class="btn btn-ac" onclick="qs=null;subView='quiz';render()">Sonraki →</button></div>`:''}
+          </div>`}
+    }else if(subView==='catlist'){
+      const catItems=cats[subId]?.items||[];
+      body=`<button class="back-btn" onclick="subView=null;subId=null;render()">← Yanlışlarım</button>
+        <div class="card"><div class="card-t" style="color:${cats[subId]?.color||'var(--tx2)'}">📋 ${subId} — ${catItems.length} Yanlış Soru</div>
+          <button class="btn btn-ac btn-sm" style="margin-bottom:14px" onclick="subView='quiz';qs=null;render()">🔁 Hepsini Tekrar Çöz</button>
+          ${catItems.map(([k,v])=>`<div class="wrong-word"><b style="font-size:12px;min-width:auto;flex:2">${v.stem||k}</b><span style="font-size:11px">Doğru: <b style="color:var(--green)">${v.correct}</b></span><span class="wrong-count">${v.count}x</span></div>`).join('')}
+        </div>`;
+    }else{
+      if(!sorted.length){
+        body=`<div style="text-align:center;padding:60px 20px;color:var(--tx3)">
+          <div style="font-size:56px;margin-bottom:12px">🎉</div>
+          <div style="font-size:16px;font-weight:600;margin-bottom:6px">Henüz yanlış yok!</div>
+          <div style="font-size:13px">Soru çözdükçe yanlış yaptıkların burada görünecek.</div>
+        </div>`;
+      }else{
+        const catEntries=Object.entries(cats).sort((a,b)=>b[1].count-a[1].count);
+        // Donut for wrong distribution
+        const totalW=catEntries.reduce((s,e)=>s+e[1].count,0);
+        const donutSegs=catEntries.map(([n,c])=>({pct:Math.max((c.count/totalW)*100,3),color:c.color}));
+
+        body=`
+          <div class="card">
+            <div class="card-t">❌ Yanlış Özeti</div>
+            <div class="donut-wrap">
+              <div style="position:relative;width:110px;height:110px;flex-shrink:0">
+                ${donutSVG(donutSegs,110,9)}
+                <div class="donut-center"><b>${sorted.length}</b><span>soru</span></div>
+              </div>
+              <div class="donut-legend">
+                ${catEntries.map(([n,c])=>`<div><i style="background:${c.color}"></i>${n}: <b style="color:${c.color}">${c.count}</b> yanlış (${c.items.length} soru)</div>`).join('')}
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2" style="margin-bottom:12px">
+            <button class="btn btn-ac" style="width:100%;justify-content:center;padding:14px" onclick="subView='quiz';subId=null;qs=null;render()">🔁 Tüm Yanlışları Tekrar Çöz (${sorted.filter(([k,v])=>v.qid).length})</button>
+            <button class="btn btn-danger" style="width:100%;justify-content:center;padding:14px" onclick="if(confirm('Yanlış listesi temizlensin mi?')){wrongs={};LS.set('wrongs',wrongs);render()}">🗑️ Listeyi Temizle</button>
+          </div>
+
+          <div class="card-t">📂 Kategoriye Göre Yanlışlar</div>
+          ${catEntries.map(([name,cat])=>`
+            <div class="rule-card" style="border-left:3px solid ${cat.color}" onclick="subView='catlist';subId='${name}';render()">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <h4 style="color:${cat.color}">${name}</h4>
+                  <p>${cat.items.length} farklı soru — toplam ${cat.count} yanlış</p>
+                </div>
+                <div style="display:flex;gap:6px;align-items:center">
+                  <button class="btn btn-ac btn-sm" onclick="event.stopPropagation();subView='quiz';subId='${name}';qs=null;render()">🔁 Tekrar Çöz</button>
+                  <span style="font-size:22px;color:var(--tx3)">›</span>
+                </div>
+              </div>
+              <div class="pbar" style="margin-top:8px"><div class="pbar-fill" style="width:${Math.round(cat.count/totalW*100)}%;background:${cat.color}"></div></div>
+            </div>
+          `).join('')}
+
+          <div class="card-t" style="margin-top:12px">🔝 En Çok Yanlış Yapılan 10 Soru</div>
+          ${sorted.slice(0,10).map(([key,val])=>`<div class="wrong-word"><b style="font-size:12px;min-width:auto;flex:2">${val.stem||key}</b><span style="font-size:11px">Doğru: <b style="color:var(--green)">${val.correct}</b></span><span class="wrong-count">${val.count}x</span></div>`).join('')}
+        `;
+      }
+    }
   }
 
   // ===== PROGRESS =====
